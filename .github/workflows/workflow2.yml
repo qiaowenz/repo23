@@ -1,0 +1,62 @@
+on: 
+  push:
+    branches:
+      - main
+
+env:
+  USER1: richardnie
+jobs:
+  build:
+     environment: dev
+     env:
+       USER2: richard
+       USER1: sandeep_job
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4.1.1
+       - name: step 2
+         env:
+           user3: ajit
+           USER1: sandeep_step
+         run: |
+          ls -l
+          echo "github repo name is ${{ GITHUB.REPOSITORY }} and branch name is ${{ GITHUB.REF_NAME }} "
+          echo "Value for variable user1, user2 and user3 are $USER1 $USER2 $user3"
+          echo " Value for user1 and servername are ${{ vars.user1 }} and ${{ vars.server_name }}"
+          echo "password for env is ${{ secrets.token1 }} "
+          echo " ${{ secrets.token1 }} " >> /tmp/gagan-pass
+          pwd
+          java -version
+         if: github.event_name == 'pull_request'
+       - run: echo " Print value of user 3 $user3"
+  prod-deploy:
+     runs-on: ubuntu-latest
+     environment: prod
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4.1.1
+       - name: step 2 run only on Linux
+         if: runner.os == 'Linux'
+         run: |
+          ls -l
+          echo "github repo name is ${{ GITHUB.REPOSITORY }} and branch name is ${{ GITHUB.REF_NAME }} "
+          echo " Value for user1 and servername are ${{ vars.user1 }} and ${{ vars.server_name }}"
+          echo "password for env is ${{ secrets.token1 }} "
+          echo " ${{ secrets.token1 }} " >> /tmp/gagan-pass
+          echo " ${{ runner.os }} "
+  deploy:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4.1.1
+       - name: step 2 run only on windows
+         if: runner.os != 'Linux'
+         run: |
+          ls -l
+          echo "github repo name is ${{ GITHUB.REPOSITORY }} and branch name is ${{ GITHUB.REF_NAME }} "
+          echo " Value for user1 and servername are ${{ vars.user1 }} and ${{ vars.server_name }}"
+          echo "password for env is ${{ secrets.token_repo }} "
+          echo " ${{ secrets.token_repo }} " >> /tmp/gagan-pass
+          echo " ${{ runner.os }} "
+          cat /tmp/gagan-pass
